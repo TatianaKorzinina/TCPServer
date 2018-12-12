@@ -116,6 +116,10 @@ namespace TestServer
 
                 if (client.Log)
                 {
+                    using (StreamWriter stream = new StreamWriter(string.Format("log of {0} client.txt", client.Number),true))
+                    {
+                        stream.WriteLine(sData);
+                    }
 
                 }
             }
