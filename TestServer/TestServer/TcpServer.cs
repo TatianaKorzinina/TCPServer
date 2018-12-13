@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace TestServer
 {
@@ -19,8 +21,13 @@ namespace TestServer
 
     private List<Client> clients = new List<Client>();
 
-    public TcpServer(int port)
-    {
+
+
+
+        public TcpServer()
+        {
+            int port;
+                 FromFile("settings.json").TryGetValue("port", out port);
         _server = new TcpListener(IPAddress.Any, port);
         _isRunning = true;
     }
@@ -32,7 +39,21 @@ namespace TestServer
             LoopClients();
         }
 
-    public void LoopClients()
+
+
+        public static Dictionary<string, int> FromFile(string fileName)
+        {
+            using (var stream = File.OpenRead(fileName))
+            {
+
+                var serializer = new DataContractJsonSerializer(typeof(Dictionary<string,int>),
+                    new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
+                    // ConsoleLogger.WriteMessage($"Loaded configuration from {stream.Name}", MessageType.Info);
+                return serializer.ReadObject(stream) as Dictionary<string,int>;
+            }
+        }
+
+        public void LoopClients()
     {
         while (_isRunning)
         {
@@ -67,6 +88,7 @@ namespace TestServer
                         Stopwatch watch = new Stopwatch();
                         // reads from stream
                         sData = sReader.ReadLine();
+
                         if (sData.Length == 0)
                         {
                             continue;

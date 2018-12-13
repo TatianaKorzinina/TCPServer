@@ -16,8 +16,8 @@ namespace TestServer
         static void Main(string[] args)
         {
             Console.WriteLine("enter port number");
-           var port =  Convert.ToInt32(Console.ReadLine());
-            TcpServer server = new TcpServer(port);
+           //var port =  Convert.ToInt32(Console.ReadLine());
+            TcpServer server = new TcpServer();
             server.Start();
         }
     }
