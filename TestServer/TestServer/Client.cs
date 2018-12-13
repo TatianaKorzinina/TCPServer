@@ -9,17 +9,17 @@ namespace TestServer
 {
     class Client
     {
-        public int Number { get; set; }
+        public readonly int Id;
         public bool Report { get; set; }
         public bool Log { get; set; }
         public readonly TcpClient TcpClient;
-
+        public HandleRequests handleRequests;
+        
         public Client(TcpClient cl, int count)
         {
             TcpClient = cl;
-            Number = count;
-            Log = false;
-            Report = false;
+            Id = count;
+            handleRequests = new HandleRequests();
         }
 
     }
