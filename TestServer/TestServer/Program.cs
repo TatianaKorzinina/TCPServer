@@ -15,36 +15,36 @@ namespace TestServer
     {
         static void Main(string[] args)
         {
-            int port;
-            FromFile("settings.txt").TryGetValue("port", out port);
-            TcpServer server = new TcpServer(port);
-            server.Start();
+            string port;          
+            LoadSettings("settings.txt").TryGetValue("port", out port);
+            int portNumber = Int32.Parse(port);
+            TcpServer server = new TcpServer(portNumber);
+            server.Start();            
+        }
+        static Dictionary<string, string>LoadSettings(string fileName)
+        {
+            List<string> settingsList = new List<string>();
 
-             Dictionary<string, int> FromFile(string fileName)
+            try
             {
-                List<string> settingsList = new List<string>();
-
-                try
+                using (var streamRead = new StreamReader(fileName))
                 {
-                    using (var streamRead = new StreamReader(fileName))
+                    while (!streamRead.EndOfStream)
                     {
-                        while (!streamRead.EndOfStream)
-                        {
-                            settingsList.Add(streamRead.ReadLine());
-                        }
-
-                        var set = settingsList.ToDictionary(x => x.Split(':')[0], x => Int32.Parse(x.Split(':')[1]));
-                        return set;
+                        settingsList.Add(streamRead.ReadLine());
                     }
-                }
-                catch (FileNotFoundException)
-                {
-                    Dictionary<string, int> defaultSettings = new Dictionary<string, int>();
-                    defaultSettings.Add("port", 5555);
-                    return defaultSettings;
-                }
 
+                    var set = settingsList.ToDictionary(x => x.Split(':')[0], x => x.Split(':')[1]);
+                    return set;
+                }
             }
+            catch (FileNotFoundException)
+            {
+                Dictionary<string, string> defaultSettings = new Dictionary<string, string>();
+                defaultSettings.Add("port", "5555");
+                return defaultSettings;
+            }
+
         }
     }
 

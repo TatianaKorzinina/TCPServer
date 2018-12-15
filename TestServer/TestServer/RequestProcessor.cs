@@ -14,11 +14,8 @@ namespace TestServer
         {
             
             string parameter = null;
-            bool success = true;
-            if (str.Length == 0)
-            {
-                success = false;
-            }
+            bool success = !(str.Length == 0);
+   
             string command = str.Split(':')[0];
             if (str.Contains(':'))
             {
@@ -77,7 +74,7 @@ namespace TestServer
                         client.Log = false;
                         break;
                     default:
-                        answer="invalid parameter exception";
+                        answer="invalid parameter";
                         break;
                 } 
             return answer;
