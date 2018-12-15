@@ -27,7 +27,7 @@ namespace TestServer
         public TcpServer()
         {
             int port;
-                 FromFile("settings.json").TryGetValue("port", out port);
+                 FromFile("settings.txt").TryGetValue("port", out port);
         _server = new TcpListener(IPAddress.Any, port);
         _isRunning = true;
     }
@@ -43,13 +43,16 @@ namespace TestServer
 
         public static Dictionary<string, int> FromFile(string fileName)
         {
-            using (var stream = File.OpenRead(fileName))
+            List<string> settingsList = new List<string>();
+            using (var streamRead = new StreamReader(fileName))
             {
+                while (!streamRead.EndOfStream)
+                {
+                    settingsList.Add(streamRead.ReadLine());   
+                }
 
-                var serializer = new DataContractJsonSerializer(typeof(Dictionary<string,int>),
-                    new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true });
-                    // ConsoleLogger.WriteMessage($"Loaded configuration from {stream.Name}", MessageType.Info);
-                return serializer.ReadObject(stream) as Dictionary<string,int>;
+                var set = settingsList.ToDictionary(x => x.Split(':')[0], x => Int32.Parse(x.Split(':')[1]));
+                return set;
             }
         }
 
