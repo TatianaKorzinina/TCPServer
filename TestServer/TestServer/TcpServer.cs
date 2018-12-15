@@ -17,8 +17,7 @@ namespace TestServer
     {
         private readonly TcpListener _server;
         private int counter = 0;
-        private List<Client> clients = new List<Client>();
-
+ 
         public TcpServer(int port)
         {
             _server = new TcpListener(IPAddress.Any, port);
@@ -40,7 +39,6 @@ namespace TestServer
                 counter += 1;
                 // client found.
                 Client client = new Client(newClient, counter);
-                clients.Add(client);
 
                 // create a thread to handle communication
                 Task t = new Task(client.HandleClient);
