@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -26,5 +28,62 @@ namespace TestServer
         {
             return handleRequests.HandleRequest(this, request);
         }
+
+        public void HandleClient()
+        {
+            // retrieve client from parameter passed to thread
+            //Client client = (Client)obj;
+            // sets two streams
+            using (StreamWriter sWriter = new StreamWriter(TcpClient.GetStream(), Encoding.ASCII))
+            using (StreamReader sReader = new StreamReader(TcpClient.GetStream(), Encoding.ASCII))
+            {
+                Boolean bClientConnected = true;
+                String sData = null;
+
+                while (bClientConnected)
+                {
+                    try
+                    {
+                        Stopwatch watch = new Stopwatch();
+                        // reads from stream
+                        sData = sReader.ReadLine();
+
+                        if (sData.Length == 0)
+                        {
+                            continue;
+                        }
+
+                        watch.Start();
+
+                        sWriter.WriteLine(Handle(sData));
+                        sWriter.Flush();
+
+                        watch.Stop();
+
+                        if (Report)
+                        {
+                            sWriter.WriteLine("command " + sData + " compleded in " + watch.ElapsedMilliseconds +
+                                              " ms");
+                            sWriter.Flush();
+                        }
+
+                        if (Log)
+                        {
+                            using (StreamWriter stream =
+                                new StreamWriter($"log of {Id} client.txt", true))
+                            {
+                                stream.WriteLine(sData);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
+
