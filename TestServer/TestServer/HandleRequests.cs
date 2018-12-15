@@ -9,84 +9,108 @@ namespace TestServer
 {
     class HandleRequests
     {
-        private  Dictionary<string, List<string>> requestsWithParams = new Dictionary<string, List<string>>();
+       // private  Dictionary<string, List<string>> requestsWithParams = new Dictionary<string, List<string>>();
         private  List<string> requestsWithoutParams = new List<string>();
-        private  List<string> options= new List<string>();
+       // private  List<string> options= new List<string>();
         public HandleRequests()
-        {   options.Add("on");
-            options.Add("off");
+        {   //options.Add("on");
+            //options.Add("off");
             requestsWithoutParams.Add("time");
-            requestsWithParams.Add("log",options);
-            requestsWithParams.Add("report", options);
+            requestsWithoutParams.Add("log");
+            requestsWithoutParams.Add("report");
         }
         
-        public  string HandleRequest( string str, Client client)
+        public  string HandleRequest( Client client, string str)
         {
 
             List<string> args = new List<string>();
-            string ansver = null;
-                string option = null;
+            string answer = null;
+                string parameter = null;
                 string command = str.Split(':')[0];
                 if (str.Contains(':'))
                 {
-                    option = str.Split(':')[1];
+                    parameter = str.Split(':')[1];
                 }
 
-                requestsWithParams.TryGetValue(command, out args);
-                
-            if (option!= null && requestsWithParams.ContainsKey(command) && args.Contains(option))
-            {
-                if (command == "report")
-                {
-                   ansver = SwitchReport(option, client);  
-                }
+            //requestsWithParams.TryGetValue(command, out args);
 
-                if (command == "log")
+            try
+            {
+                switch (command)
                 {
-                    ansver = SwitchLogs(option, client);
-                    
+                    case "report":
+                        answer = SwitchReport(parameter, client);
+                        break;
+                    case "log":
+                        answer = SwitchLogs(parameter, client);
+                        break;
+                    case "time":
+                        answer = Time();
+                        break;
+                    default: throw new Exception("invalid command");
+
                 }
             }
-            else if (option == null && requestsWithoutParams.Contains(command))
+            catch (Exception e)
             {
-                if (command == "time")
-                {
-                   ansver = Time();
-                }
+                answer = e.Message;
             }
-            else
-            {
-                ansver = "invalid command";
-            }
-            return ansver;
+               
+            return answer;
         }
 
-        public string SwitchReport(string option, Client client)
+        public string SwitchReport(string parameter, Client client)
         {
-            switch (option)
+            string answer = null;
+            try
             {
-                case "on":
-                    client.Report = true;
-                    break;
-                case "off":
-                    client.Report = false;
-                    break;
+                switch (parameter)
+                {
+                    case "on":
+                        client.Report = true;
+                        break;
+                    case "off":
+                        client.Report = false;
+                        break;
+                    default:
+                        throw new Exception("invalid parameter");
+                }
+
             }
-            return null;
+            catch (Exception e)
+            {
+                answer = e.Message;
+                //throw;
+            }
+
+            return answer;
         }
 
-        public string SwitchLogs(string option, Client client)
+        public string SwitchLogs(string parameter, Client client)
         {
-            switch (option)
+            string answer = null;
+            try
             {
-                case "on":
-                    client.Log = true;
-                    break;
-                case "off":
-                    client.Log = false;
-                    break;
+                switch (parameter)
+                {
+                    case "on":
+                        client.Log = true;
+                        break;
+                    case "off":
+                        client.Log = false;
+                        break;
+                    default:
+                        throw new  Exception("invalid parameter exception");
+                }
+
             }
-            return null;
+            catch (Exception e)
+            {
+                answer = e.Message;
+                //throw;
+            }
+
+            return answer;
         }
 
         public string Time()

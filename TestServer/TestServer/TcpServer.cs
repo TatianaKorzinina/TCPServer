@@ -96,7 +96,7 @@ namespace TestServer
 
                         watch.Start();
 
-                        sWriter.WriteLine(client.handleRequests.HandleRequest(sData, client));
+                        sWriter.WriteLine(client.Handle(sData));
                         sWriter.Flush();
 
                         watch.Stop();

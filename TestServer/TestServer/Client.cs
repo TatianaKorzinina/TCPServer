@@ -13,7 +13,7 @@ namespace TestServer
         public bool Report { get; set; }
         public bool Log { get; set; }
         public readonly TcpClient TcpClient;
-        public HandleRequests handleRequests;
+        private readonly HandleRequests handleRequests;
         
         public Client(TcpClient cl, int count)
         {
@@ -22,5 +22,9 @@ namespace TestServer
             handleRequests = new HandleRequests();
         }
 
+        public string Handle(string request)
+        {
+            return handleRequests.HandleRequest(this, request);
+        }
     }
 }
