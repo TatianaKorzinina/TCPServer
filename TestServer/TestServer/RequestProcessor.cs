@@ -7,32 +7,31 @@ using System.Threading.Tasks;
 
 namespace TestServer
 {
-    class HandleRequests
+    class RequestProcessor
     {
-       // private  Dictionary<string, List<string>> requestsWithParams = new Dictionary<string, List<string>>();
-        private  List<string> requestsWithoutParams = new List<string>();
-       // private  List<string> options= new List<string>();
-        public HandleRequests()
-        {   //options.Add("on");
-            //options.Add("off");
-            requestsWithoutParams.Add("time");
-            requestsWithoutParams.Add("log");
-            requestsWithoutParams.Add("report");
+        private  List<string> requests = new List<string>();
+
+        public RequestProcessor()
+        {   
+            requests.Add("time");
+            requests.Add("log");
+            requests.Add("report");
         }
         
-        public  string HandleRequest( Client client, string str)
+        public  string HandleRequest( Client client, string str, out bool isEmpty)
         {
-
-            List<string> args = new List<string>();
             string answer = null;
-                string parameter = null;
-                string command = str.Split(':')[0];
-                if (str.Contains(':'))
-                {
-                    parameter = str.Split(':')[1];
-                }
-
-            //requestsWithParams.TryGetValue(command, out args);
+            string parameter = null;
+            isEmpty = false;
+            if (str.Length == 0)
+            {
+                isEmpty = true;
+            }
+            string command = str.Split(':')[0];
+            if (str.Contains(':'))
+            {
+                parameter = str.Split(':')[1];
+            }
 
             try
             {
@@ -80,7 +79,6 @@ namespace TestServer
             catch (Exception e)
             {
                 answer = e.Message;
-                //throw;
             }
 
             return answer;
@@ -107,7 +105,6 @@ namespace TestServer
             catch (Exception e)
             {
                 answer = e.Message;
-                //throw;
             }
 
             return answer;

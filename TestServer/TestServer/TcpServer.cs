@@ -16,19 +16,15 @@ namespace TestServer
     class TcpServer
     {
         private readonly TcpListener _server;
-        private Boolean _isRunning;
         private int counter = 0;
         private List<Client> clients = new List<Client>();
 
 
 
 
-        public TcpServer()
+        public TcpServer(int port)
         {
-            int port;
-            FromFile("settings.txt").TryGetValue("port", out port);
             _server = new TcpListener(IPAddress.Any, port);
-            _isRunning = true;
         }
 
         public void Start()
@@ -43,21 +39,32 @@ namespace TestServer
         public static Dictionary<string, int> FromFile(string fileName)
         {
             List<string> settingsList = new List<string>();
-            using (var streamRead = new StreamReader(fileName))
+            
+            try
             {
-                while (!streamRead.EndOfStream)
+                using (var streamRead = new StreamReader(fileName))
                 {
-                    settingsList.Add(streamRead.ReadLine());
-                }
+                    while (!streamRead.EndOfStream)
+                    {
+                        settingsList.Add(streamRead.ReadLine());
+                    }
 
-                var set = settingsList.ToDictionary(x => x.Split(':')[0], x => Int32.Parse(x.Split(':')[1]));
-                return set;
+                    var set = settingsList.ToDictionary(x => x.Split(':')[0], x => Int32.Parse(x.Split(':')[1]));
+                    return set;
+                }
             }
+            catch (FileNotFoundException)
+            {
+                Dictionary<string, int> defaultSettings = new Dictionary<string, int>();
+                defaultSettings.Add("port", 5555);
+                return defaultSettings;
+            }
+
         }
 
         public void LoopClients()
         {
-            while (_isRunning)
+            while (true)
             {
                 // wait for client connection
                 TcpClient newClient = _server.AcceptTcpClient();

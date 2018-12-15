@@ -15,8 +15,9 @@ namespace TestServer
     {
         static void Main(string[] args)
         {
-            
-            TcpServer server = new TcpServer();
+            int port;
+            TcpServer.FromFile("settings.txt").TryGetValue("port", out port);
+            TcpServer server = new TcpServer(port);
             server.Start();
         }
     }
