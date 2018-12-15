@@ -19,9 +19,6 @@ namespace TestServer
         private int counter = 0;
         private List<Client> clients = new List<Client>();
 
-
-
-
         public TcpServer(int port)
         {
             _server = new TcpListener(IPAddress.Any, port);
@@ -32,34 +29,6 @@ namespace TestServer
             _server.Start();
             Console.WriteLine("server started");
             LoopClients();
-        }
-
-
-
-        public static Dictionary<string, int> FromFile(string fileName)
-        {
-            List<string> settingsList = new List<string>();
-            
-            try
-            {
-                using (var streamRead = new StreamReader(fileName))
-                {
-                    while (!streamRead.EndOfStream)
-                    {
-                        settingsList.Add(streamRead.ReadLine());
-                    }
-
-                    var set = settingsList.ToDictionary(x => x.Split(':')[0], x => Int32.Parse(x.Split(':')[1]));
-                    return set;
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                Dictionary<string, int> defaultSettings = new Dictionary<string, int>();
-                defaultSettings.Add("port", 5555);
-                return defaultSettings;
-            }
-
         }
 
         public void LoopClients()
@@ -74,7 +43,7 @@ namespace TestServer
                 clients.Add(client);
 
                 // create a thread to handle communication
-                Thread t = new Thread(client.HandleClient);
+                Task t = new Task(client.HandleClient);
                 t.Start();
             }
         }

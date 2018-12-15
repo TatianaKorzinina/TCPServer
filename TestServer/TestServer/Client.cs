@@ -24,9 +24,9 @@ namespace TestServer
             requestProcessor = new RequestProcessor();
         }
 
-        public string Handle(string request,out bool isEmpty)
+        public bool Handle(string request, out string answer)
         {
-            return requestProcessor.HandleRequest(this, request, out isEmpty);
+            return requestProcessor.HandleRequest(this, request, out answer);
         }
 
         public void HandleClient()
@@ -44,20 +44,19 @@ namespace TestServer
                         Stopwatch watch = new Stopwatch();
                         // reads from stream
                         data = sReader.ReadLine();
-                        bool isEmpty;
-                        var answer = Handle(data, out isEmpty);
-                        if (!isEmpty)
-                        {
-                            watch.Start();
 
+                        string answer;
+                        watch.Start();
+                        bool success = Handle(data, out answer);
+                        watch.Stop();
+                        if (success)
+                        {     
                             sWriter.WriteLine(answer);
                             sWriter.Flush();
 
-                            watch.Stop();
-
                             if (Report)
                             {
-                                sWriter.WriteLine("command " + data + " completed in " + watch.ElapsedMilliseconds +
+                                sWriter.WriteLine("command " + data + " completed in " + watch.Elapsed.TotalMilliseconds +
                                                   " ms");
                                 sWriter.Flush();
                             }
@@ -71,6 +70,7 @@ namespace TestServer
                                 }
                             }
                         }
+
                     }
                     catch (Exception e)
                     {

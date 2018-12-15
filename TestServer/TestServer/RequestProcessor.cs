@@ -9,34 +9,23 @@ namespace TestServer
 {
     class RequestProcessor
     {
-        private  List<string> requests = new List<string>();
-
-        public RequestProcessor()
-        {   
-            requests.Add("time");
-            requests.Add("log");
-            requests.Add("report");
-        }
         
-        public  string HandleRequest( Client client, string str, out bool isEmpty)
+        public  bool HandleRequest( Client client, string str, out string answer)
         {
-            string answer = null;
+            
             string parameter = null;
-            isEmpty = false;
+            bool success = true;
             if (str.Length == 0)
             {
-                isEmpty = true;
+                success = false;
             }
             string command = str.Split(':')[0];
             if (str.Contains(':'))
             {
                 parameter = str.Split(':')[1];
             }
-
-            try
+            switch (command)
             {
-                switch (command)
-                {
                     case "report":
                         answer = SwitchReport(parameter, client);
                         break;
@@ -46,23 +35,18 @@ namespace TestServer
                     case "time":
                         answer = Time();
                         break;
-                    default: throw new Exception("invalid command");
+                    default:
+                        answer ="invalid command";
+                        break;
+            }
 
-                }
-            }
-            catch (Exception e)
-            {
-                answer = e.Message;
-            }
-               
-            return answer;
+     return success;
         }
 
-        public string SwitchReport(string parameter, Client client)
+        private string SwitchReport(string parameter, Client client)
         {
             string answer = null;
-            try
-            {
+  
                 switch (parameter)
                 {
                     case "on":
@@ -72,23 +56,18 @@ namespace TestServer
                         client.Report = false;
                         break;
                     default:
-                        throw new Exception("invalid parameter");
+                        answer = "invalid parameter";
+                        break;
                 }
 
-            }
-            catch (Exception e)
-            {
-                answer = e.Message;
-            }
-
+            
             return answer;
         }
 
-        public string SwitchLogs(string parameter, Client client)
+        private string SwitchLogs(string parameter, Client client)
         {
             string answer = null;
-            try
-            {
+            
                 switch (parameter)
                 {
                     case "on":
@@ -98,19 +77,13 @@ namespace TestServer
                         client.Log = false;
                         break;
                     default:
-                        throw new  Exception("invalid parameter exception");
-                }
-
-            }
-            catch (Exception e)
-            {
-                answer = e.Message;
-            }
-
+                        answer="invalid parameter exception";
+                        break;
+                } 
             return answer;
         }
 
-        public string Time()
+        private string Time()
         {
             return DateTime.Now.ToString();
         }
