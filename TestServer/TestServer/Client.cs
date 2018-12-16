@@ -15,18 +15,18 @@ namespace TestServer
         public bool Report { get; set; }
         public bool Log { get; set; }
         public readonly TcpClient TcpClient;
-        private readonly RequestProcessor requestProcessor;
+        private readonly RequestProcessor _requestProcessor;
         
         public Client(TcpClient cl, int count)
         {
             TcpClient = cl;
             Id = count;
-            requestProcessor = new RequestProcessor();
+            _requestProcessor = new RequestProcessor();
         }
 
         public bool Handle(string request, out string answer)
         {
-            return requestProcessor.HandleRequest(this, request, out answer);
+            return _requestProcessor.HandleRequest(this, request, out answer);
         }
 
         public void HandleClient()
@@ -42,7 +42,7 @@ namespace TestServer
                     try
                     {
                         Stopwatch watch = new Stopwatch();
-                        // reads from stream
+                        // reads from a stream
                         data = sReader.ReadLine();
 
                         string answer;
@@ -53,14 +53,14 @@ namespace TestServer
                         {     
                             sWriter.WriteLine(answer);
                             sWriter.Flush();
-
+                            // if report mode is "on", return to client title of command and command execution time
                             if (Report)
                             {
                                 sWriter.WriteLine("command " + data + " completed in " + watch.Elapsed.TotalMilliseconds +
                                                   " ms");
                                 sWriter.Flush();
                             }
-
+                            // if log mode is "on" write logs to file separately for each client
                             if (Log)
                             {
                                 using (StreamWriter stream =
@@ -70,7 +70,6 @@ namespace TestServer
                                 }
                             }
                         }
-
                     }
                     catch (Exception e)
                     {

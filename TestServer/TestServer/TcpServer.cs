@@ -37,10 +37,10 @@ namespace TestServer
                 // wait for client connection
                 TcpClient newClient = _server.AcceptTcpClient();
                 counter += 1;
-                // client found.
+                // client found
                 Client client = new Client(newClient, counter);
 
-                // create a thread to handle communication
+                // create a task to handle communication
                 Task t = new Task(client.HandleClient);
                 t.Start();
             }

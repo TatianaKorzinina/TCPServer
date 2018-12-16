@@ -15,16 +15,18 @@ namespace TestServer
     {
         static void Main(string[] args)
         {
-            string port;          
+            string port;    
+            // load port number from file
             LoadSettings("settings.txt").TryGetValue("port", out port);
             int portNumber = Int32.Parse(port);
             TcpServer server = new TcpServer(portNumber);
             server.Start();            
         }
+
         static Dictionary<string, string>LoadSettings(string fileName)
         {
             List<string> settingsList = new List<string>();
-
+            // try to load settings from file
             try
             {
                 using (var streamRead = new StreamReader(fileName))
@@ -38,17 +40,16 @@ namespace TestServer
                     return set;
                 }
             }
+            // set default port number if the file doesn't exist
             catch (FileNotFoundException)
             {
-                Dictionary<string, string> defaultSettings = new Dictionary<string, string>();
-                defaultSettings.Add("port", "5555");
+                Dictionary<string, string> defaultSettings = new Dictionary<string, string>
+                {
+                    { "port", "5555" }
+                };
                 return defaultSettings;
             }
 
         }
-    }
-
-    //class TcpServer
-    
-        
+    }        
 }

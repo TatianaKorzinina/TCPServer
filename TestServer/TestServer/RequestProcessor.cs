@@ -14,13 +14,17 @@ namespace TestServer
         {
             
             string parameter = null;
+            // check if the command is empty
+
             bool success = !(str.Length == 0);
-   
+
+            // divide the incoming string into command and parameter
             string command = str.Split(':')[0];
             if (str.Contains(':'))
             {
                 parameter = str.Split(':')[1];
             }
+            // recognize the command and execute it
             switch (command)
             {
                     case "report":
@@ -37,13 +41,13 @@ namespace TestServer
                         break;
             }
 
-     return success;
+            return success;
         }
 
         private string SwitchReport(string parameter, Client client)
         {
             string answer = null;
-  
+                // recognize the parameter and switch report mode
                 switch (parameter)
                 {
                     case "on":
@@ -55,17 +59,16 @@ namespace TestServer
                     default:
                         answer = "invalid parameter";
                         break;
-                }
-
-            
+                }    
             return answer;
         }
 
         private string SwitchLogs(string parameter, Client client)
         {
             string answer = null;
-            
-                switch (parameter)
+
+            // recognize the parameter and switch log mode
+            switch (parameter)
                 {
                     case "on":
                         client.Log = true;
