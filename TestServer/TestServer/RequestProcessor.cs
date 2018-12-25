@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace TestServer
 {
-    class RequestProcessor
+    static class RequestProcessor
     {
-        private IDictionary<string, Func<string,Client, string>> _commands;
-        public RequestProcessor()
+        private static readonly IDictionary<string, Func<string,Client, string>> _commands;
+        static RequestProcessor()
         {
             // Ininit commands dictionary
             _commands = new Dictionary<string, Func<string, Client, string>>();
 
-            foreach (var methodInfo in typeof(RequestProcessor).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (var methodInfo in typeof(RequestProcessor).GetMethods(BindingFlags.NonPublic | BindingFlags.Static))
             {
                 // Search methodInfo's with ClientCommand attribute
                 if (methodInfo.GetCustomAttributes(typeof(ClientCommandAttribute), true).FirstOrDefault() is ClientCommandAttribute commandAttribute)
                 {
-                    _commands.Add(commandAttribute.Name, (parameter, client) => (string)methodInfo.Invoke(this, new object[]{parameter,client}));
+                    _commands.Add(commandAttribute.Name, (parameter, client) => (string)methodInfo.Invoke(null, new object[]{parameter,client}));
                 }
             }
         }
 
 
-        public  bool HandleRequest( Client client, string str, out string answer)
+        public  static bool HandleRequest( Client client, string str, out string answer)
         {
             
             string parameter = null;
@@ -57,7 +57,7 @@ namespace TestServer
         }
 
         [ClientCommand("report")]
-        private string SwitchReport(string parameter, Client client)
+        private static string SwitchReport(string parameter, Client client)
         {
             string answer = null;
                 // recognize the parameter and switch report mode
@@ -77,7 +77,7 @@ namespace TestServer
         }
 
         [ClientCommand("log")]
-        private string SwitchLogs(string parameter, Client client)
+        private static string SwitchLogs(string parameter, Client client)
         {
             string answer = null;
 
@@ -98,7 +98,7 @@ namespace TestServer
         }
 
         [ClientCommand("time")]
-        private string Time(string parameter, Client client)
+        private static string Time(string parameter, Client client)
         {
             return DateTime.Now.ToString();
         }
