@@ -15,18 +15,17 @@ namespace TestServer
         public bool Report { get; set; }
         public bool Log { get; set; }
         public readonly TcpClient TcpClient;
-        private readonly RequestProcessor _requestProcessor;
+        
         
         public Client(TcpClient cl, int count)
         {
             TcpClient = cl;
-            Id = count;
-            _requestProcessor = new RequestProcessor();
+            Id = count;            
         }
 
         public bool Handle(string request, out string answer)
         {
-            return _requestProcessor.HandleRequest(this, request, out answer);
+            return RequestProcessor.HandleRequest(this, request, out answer);
         }
 
         public void HandleClient()
